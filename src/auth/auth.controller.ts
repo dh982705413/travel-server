@@ -55,7 +55,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   async setAvatar(@UploadedFile() file, @Req() req) {
     const user = await this.userModel.findById(req.user._id);
-    const filename = `${Date.now()}-${file.originalname}`;
+    const filename = `${Date.now()}-${file.originalname}-'avatar'`;
     user.avatar = 'http://localhost:3000/static/' + filename;
     const writeImage = createWriteStream(
       join(__dirname, '..', 'upload', filename),
