@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BannerService } from './banner.service';
 import { BannerDto } from './dto/banner.dto';
@@ -19,7 +28,7 @@ export class BannerController {
     return await this.bannerService.setBanner(dto);
   }
 
-  @Put('removeBanner/:id')
+  @Delete('removeBanner/:id')
   @ApiOperation({ summary: '删除轮播图' })
   async removeBanner(@Param('id') id: string) {
     return await this.bannerService.removeBanner(id);

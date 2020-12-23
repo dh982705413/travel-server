@@ -22,7 +22,7 @@ export class User {
   })
   password: string;
 
-  @Prop()
+  @Prop({ default: '' })
   avatar?: string;
 
   @Prop({ ref: () => Article })

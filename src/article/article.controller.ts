@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { ArticleDto } from './dto/article.dto';
@@ -23,7 +32,7 @@ export class ArticleController {
     return await this.ArticleService.setArticle(dto);
   }
 
-  @Put('remove/:id')
+  @Delete('remove/:id')
   @ApiOperation({ summary: '删除文章' })
   async reomveArticle(@Param('id') id: string) {
     return await this.ArticleService.removeArticle(id);

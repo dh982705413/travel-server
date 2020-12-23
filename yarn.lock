@@ -624,6 +624,13 @@
     fs-extra "9.0.1"
     pluralize "8.0.0"
 
+"@nestjs/serve-static@^2.1.4":
+  version "2.1.4"
+  resolved "https://registry.npm.taobao.org/@nestjs/serve-static/download/@nestjs/serve-static-2.1.4.tgz#d25f7691b0cb19d3f12d161129dd1469dfdc880d"
+  integrity sha1-0l92kbDLGdPxLRYRKd0Uad/ciA0=
+  dependencies:
+    path-to-regexp "0.1.7"
+
 "@nestjs/swagger@^4.7.8":
   version "4.7.8"
   resolved "https://registry.npm.taobao.org/@nestjs/swagger/download/@nestjs/swagger-4.7.8.tgz?cache=0&sync_timestamp=1608214007746&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40nestjs%2Fswagger%2Fdownload%2F%40nestjs%2Fswagger-4.7.8.tgz#4a7512263edd7d29165797bbddbf4e5763a9197e"

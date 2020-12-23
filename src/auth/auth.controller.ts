@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UserDto } from 'src/auth/dto/user.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { InjectModel } from 'nestjs-typegoose';
@@ -6,6 +15,9 @@ import { User } from './../../libs/db/src/models/user.model';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { createWriteStream } from 'fs';
+import { join } from 'path';
 
 @ApiTags('认证')
 @Controller('auth')
@@ -36,5 +48,19 @@ export class AuthController {
   @ApiBearerAuth()
   getUserInfo(@Req() req) {
     return req.user;
+  }
+
+  @Post('setAvatar')
+  @UseInterceptors(FileInterceptor('file'))
+  @UseGuards(AuthGuard('jwt'))
+  async setAvatar(@UploadedFile() file, @Req() req) {
+    const user = await this.userModel.findById(req.user._id);
+    const filename = `${Date.now()}-${file.originalname}`;
+    user.avatar = 'http://localhost:3000/static/' + filename;
+    const writeImage = createWriteStream(
+      join(__dirname, '..', 'upload', filename),
+    );
+    writeImage.write(file.buffer);
+    user.save();
   }
 }

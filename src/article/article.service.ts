@@ -4,7 +4,6 @@ import { Article } from './../../libs/db/src/models/article.model';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ArticleDto } from './dto/article.dto';
 import { User } from 'db/db/models/user.model';
-import { use } from 'passport';
 
 @Injectable()
 export class ArticleService {
