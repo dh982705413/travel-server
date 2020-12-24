@@ -4,6 +4,8 @@ import { Article } from './../../libs/db/src/models/article.model';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ArticleDto } from './dto/article.dto';
 import { User } from 'db/db/models/user.model';
+import { createWriteStream } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class ArticleService {
@@ -22,8 +24,10 @@ export class ArticleService {
       .limit(Number(pageSize));
   }
 
-  async setArticle(dto: ArticleDto) {
-    const user = await this.userModel.findById(dto.author);
+  async setArticle(file: any, dto: ArticleDto, id: string) {
+    const user = await this.userModel.findById(id);
+    const preview = await this.setPrewView(file);
+    dto.preview = preview as any;
     const article = await this.articleModel.create(dto);
     user.articles.push(article);
     user.save();
@@ -40,5 +44,16 @@ export class ArticleService {
 
   async findArticleById(id: string) {
     return await this.articleModel.findById(id);
+  }
+
+  async setPrewView(file) {
+    return new Promise((resolve) => {
+      const filename = `${Date.now()}-${file.originalname}-'preview'`;
+      const writeImage = createWriteStream(
+        join(__dirname, '..', 'upload', filename),
+      );
+      writeImage.write(file.buffer);
+      resolve('http://localhost:3000/static/' + filename);
+    });
   }
 }

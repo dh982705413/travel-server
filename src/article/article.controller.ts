@@ -7,7 +7,13 @@ import {
   Patch,
   Post,
   Put,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { ArticleDto } from './dto/article.dto';
@@ -27,9 +33,11 @@ export class ArticleController {
   }
 
   @Post('setArticle')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('preview'))
   @ApiOperation({ summary: '添加文章' })
-  async setArticle(@Body() dto: ArticleDto) {
-    return await this.ArticleService.setArticle(dto);
+  async setArticle(@UploadedFile() file, @Body() dto: ArticleDto, @Req() req) {
+    return await this.ArticleService.setArticle(file, dto, req.user._id);
   }
 
   @Delete('remove/:id')
