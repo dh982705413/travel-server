@@ -48,8 +48,13 @@ export class ArticleController {
 
   @Patch('edit/:id')
   @ApiOperation({ summary: '编辑文章' })
-  async editArticle(@Param('id') id: string, @Body() dto: ArticleDto) {
-    return this.ArticleService.updateArticle(id, dto);
+  @UseInterceptors(FileInterceptor('preview'))
+  async editArticle(
+    @Param('id') id: string,
+    @Body() dto: ArticleDto,
+    @UploadedFile() file,
+  ) {
+    return this.ArticleService.updateArticle(id, dto, file);
   }
 
   @Get(':id')

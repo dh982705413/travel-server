@@ -38,7 +38,9 @@ export class ArticleService {
     return await this.articleModel.findByIdAndRemove(id);
   }
 
-  async updateArticle(id: string, dto: ArticleDto) {
+  async updateArticle(id: string, dto: ArticleDto, file: any) {
+    const preview = await this.setPrewView(file);
+    dto.preview = preview as string;
     return await this.articleModel.findByIdAndUpdate(id, dto);
   }
 
