@@ -40,6 +40,7 @@ export class ArticleService {
 
   async updateArticle(id: string, dto: ArticleDto, file: any) {
     if (file) {
+      console.log(file);
       const preview = await this.CommonService.uploadImage(file, 'preview');
       dto.preview = preview as string;
     }

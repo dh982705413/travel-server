@@ -13,8 +13,16 @@ export class BannerService {
     private readonly CommonService: CommonService,
   ) {}
 
-  async getBanner() {
-    return await this.bannerModel.find();
+  async getBanner(currentPage: number, pageSize: number) {
+    const banners = await this.bannerModel
+      .find()
+      .skip(Number(pageSize) * (Number(currentPage) - 1))
+      .limit(Number(pageSize));
+    const total = await this.bannerModel.count();
+    return {
+      banners,
+      total,
+    };
   }
 
   async setBanner(dto: BannerDto, file: any) {

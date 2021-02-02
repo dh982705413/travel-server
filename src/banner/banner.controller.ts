@@ -18,10 +18,13 @@ import { BannerDto } from './dto/banner.dto';
 @ApiTags('轮播图')
 export class BannerController {
   constructor(private readonly bannerService: BannerService) {}
-  @Get()
+  @Get(':currentPage/:pageSize')
   @ApiOperation({ summary: '获取所有轮播图' })
-  async getBanner() {
-    return await this.bannerService.getBanner();
+  async getBanner(
+    @Param('currentPage') currentPage?: number,
+    @Param('pageSize') pageSize?: number,
+  ) {
+    return await this.bannerService.getBanner(currentPage || 1, pageSize || 10);
   }
 
   @Post('setBanner')
