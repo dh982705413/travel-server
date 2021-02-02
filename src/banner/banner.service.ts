@@ -3,19 +3,26 @@ import { InjectModel } from 'nestjs-typegoose';
 import { Banner } from './../../libs/db/src/models/banner.model';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { BannerDto } from './dto/banner.dto';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class BannerService {
   constructor(
     @InjectModel(Banner)
     private readonly bannerModel: ReturnModelType<typeof Banner>,
+    private readonly CommonService: CommonService,
   ) {}
 
   async getBanner() {
     return await this.bannerModel.find();
   }
 
-  async setBanner(dto: BannerDto) {
+  async setBanner(dto: BannerDto, file: any) {
+    const url = (await this.CommonService.uploadImage(
+      file,
+      'banner',
+    )) as string;
+    dto.image = url;
     const banner = this.bannerModel.create(dto);
     return banner;
   }

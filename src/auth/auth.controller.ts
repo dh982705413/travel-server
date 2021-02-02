@@ -16,8 +16,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { createWriteStream } from 'fs';
-import { join } from 'path';
+import { CommonService } from './../common/common.service';
 
 @ApiTags('认证')
 @Controller('auth')
@@ -25,6 +24,7 @@ export class AuthController {
   constructor(
     @InjectModel(User) private readonly userModel: ReturnModelType<typeof User>,
     private readonly jwtServer: JwtService,
+    private readonly CommonService: CommonService,
   ) {}
 
   @Post('register')
@@ -55,12 +55,9 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   async setAvatar(@UploadedFile() file, @Req() req) {
     const user = await this.userModel.findById(req.user._id);
-    const filename = `${Date.now()}-${file.originalname}-'avatar'`;
-    user.avatar = 'http://localhost:3000/static/' + filename;
-    const writeImage = createWriteStream(
-      join(__dirname, '..', 'upload', filename),
-    );
-    writeImage.write(file.buffer);
+    if (file) {
+      this.CommonService.uploadImage(file, 'avatar');
+    }
     user.save();
   }
 }

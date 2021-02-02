@@ -7,11 +7,11 @@ import { modelOptions, Prop } from '@typegoose/typegoose';
 })
 export class Banner {
   @Prop()
-  title: string;
+  title?: string;
 
   @Prop()
   image: string;
 
   @Prop()
-  time: Date;
+  time?: Date;
 }

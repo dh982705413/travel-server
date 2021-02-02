@@ -6,8 +6,10 @@ import {
   Param,
   Patch,
   Post,
-  Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BannerService } from './banner.service';
 import { BannerDto } from './dto/banner.dto';
@@ -24,8 +26,10 @@ export class BannerController {
 
   @Post('setBanner')
   @ApiOperation({ summary: '添加轮播图' })
-  async setBanner(@Body() dto: BannerDto) {
-    return await this.bannerService.setBanner(dto);
+  @UseInterceptors(FileInterceptor('banner'))
+  async setBanner(@UploadedFile() file, @Body() dto: BannerDto) {
+    console.log(file, dto);
+    return await this.bannerService.setBanner(dto, file);
   }
 
   @Delete('removeBanner/:id')
