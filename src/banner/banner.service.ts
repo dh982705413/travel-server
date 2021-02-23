@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
-import { Banner } from './../../libs/db/src/models/banner.model';
+import { Banner, BannerOption } from './../../libs/db/src/models/banner.model';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { BannerDto } from './dto/banner.dto';
 import { CommonService } from 'src/common/common.service';
@@ -10,6 +10,8 @@ export class BannerService {
   constructor(
     @InjectModel(Banner)
     private readonly bannerModel: ReturnModelType<typeof Banner>,
+    @InjectModel(BannerOption)
+    private readonly bannerOptModel: ReturnModelType<typeof BannerOption>,
     private readonly CommonService: CommonService,
   ) {}
 
@@ -19,9 +21,11 @@ export class BannerService {
       .skip(Number(pageSize) * (Number(currentPage) - 1))
       .limit(Number(pageSize));
     const total = await this.bannerModel.count();
+    const interval = await this.getBannnerInterval();
     return {
       banners,
       total,
+      interval,
     };
   }
 
@@ -41,5 +45,45 @@ export class BannerService {
 
   async uploadBanner(id: string, dto: BannerDto) {
     return this.bannerModel.findByIdAndUpdate(id, dto);
+  }
+
+  async enableBanner(id: string, isCheck: boolean) {
+    const { length } = await this.enableBanners();
+    if (isCheck && length >= 8) {
+      throw new HttpException('超出上限', HttpStatus.FORBIDDEN);
+    } else {
+      const banner = await this.bannerModel.findByIdAndUpdate(id, {
+        isCheck,
+      });
+      return banner;
+    }
+  }
+
+  async enableBanners() {
+    const banners = await this.bannerModel.find();
+    const enableBanners = banners.filter((v) => v.isCheck);
+    const interval = await this.getBannnerInterval();
+    return {
+      enableBanners,
+      length: enableBanners.length,
+      interval,
+      isFull: enableBanners.length >= 8,
+    };
+  }
+
+  async setInterval(interval: number) {
+    const option = await this.bannerOptModel.findOne();
+    if (!option) {
+      await this.bannerOptModel.create({ interval });
+    } else {
+      option.interval = interval;
+      option.save();
+    }
+    return this.bannerOptModel.findOne();
+  }
+
+  async getBannnerInterval() {
+    const bannerOpt = await this.bannerOptModel.findOne();
+    return bannerOpt.interval;
   }
 }

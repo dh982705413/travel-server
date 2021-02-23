@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { ArticleDto } from './dto/article.dto';
 
@@ -24,11 +24,18 @@ export class ArticleController {
 
   @Get(':currentPage/:pageSize')
   @ApiOperation({ summary: '获取文章' })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   async getArticle(
     @Param('currentPage') currentPage: number = 1,
     @Param('pageSize') pageSize: number = 0,
+    @Req() req,
   ) {
-    return await this.ArticleService.getArticle(currentPage, pageSize);
+    return await this.ArticleService.getArticle(
+      currentPage,
+      pageSize,
+      req.user,
+    );
   }
 
   @Post('setArticle')

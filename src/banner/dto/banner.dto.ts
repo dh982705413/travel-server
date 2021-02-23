@@ -11,4 +11,7 @@ export class BannerDto {
   @IsNotEmpty({ message: '图片不能为空' })
   @ApiPropertyOptional({ description: '轮播图图片' })
   image: string;
+
+  @ApiPropertyOptional({ description: '轮播图是否启用' })
+  isCheck?: boolean;
 }

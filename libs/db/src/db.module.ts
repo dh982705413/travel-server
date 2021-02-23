@@ -1,10 +1,15 @@
 import { Global, Module } from '@nestjs/common';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { Article } from './models/article.model';
-import { Banner } from './models/banner.model';
+import { Banner, BannerOption } from './models/banner.model';
 import { User } from './models/user.model';
 
-const models = TypegooseModule.forFeature([User, Banner, Article]);
+const models = TypegooseModule.forFeature([
+  User,
+  Banner,
+  Article,
+  BannerOption,
+]);
 
 @Global()
 @Module({

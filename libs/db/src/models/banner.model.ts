@@ -14,4 +14,17 @@ export class Banner {
 
   @Prop()
   time?: Date;
+
+  @Prop({ default: false })
+  isCheck?: boolean;
+}
+
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+  },
+})
+export class BannerOption {
+  @Prop({ default: 2000 })
+  interval?: number;
 }

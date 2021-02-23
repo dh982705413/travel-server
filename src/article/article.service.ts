@@ -5,6 +5,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { ArticleDto } from './dto/article.dto';
 import { User } from 'db/db/models/user.model';
 import { CommonService } from './../common/common.service';
+import { UserDto } from './../auth/dto/user.dto';
 
 @Injectable()
 export class ArticleService {
@@ -16,12 +17,13 @@ export class ArticleService {
     private readonly CommonService: CommonService,
   ) {}
 
-  async getArticle(currentPage: number, pageSize: number) {
-    return await this.articleModel
-      .find()
-      .populate('author')
-      .skip(Number(pageSize) * (Number(currentPage) - 1))
-      .limit(Number(pageSize));
+  async getArticle(currentPage: number, pageSize: number, user: UserDto) {
+    const articles = user.articles;
+    console.log(currentPage, pageSize);
+    return {
+      total: articles.length,
+      articles: this.pagination(currentPage, pageSize, articles),
+    };
   }
 
   async setArticle(file: any, dto: ArticleDto, id: string) {
@@ -49,5 +51,11 @@ export class ArticleService {
 
   async findArticleById(id: string) {
     return await this.articleModel.findById(id);
+  }
+
+  pagination(currentPage: number, pageSize: number, arr: any[]) {
+    let skipNum = (currentPage - 1) * pageSize;
+    let newArr = arr.splice(skipNum, pageSize);
+    return newArr;
   }
 }

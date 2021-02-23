@@ -46,4 +46,22 @@ export class BannerController {
   async updateBanner(@Param('id') id: string, @Body() dto: BannerDto) {
     return await this.bannerService.uploadBanner(id, dto);
   }
+
+  @Patch('enableBanner/:id')
+  @ApiOperation({ summary: '启用轮播图' })
+  enableBanner(@Param('id') id: string, @Body() enable: { isCheck: boolean }) {
+    return this.bannerService.enableBanner(id, enable.isCheck);
+  }
+
+  @Get('getEnableBanner')
+  @ApiOperation({ summary: '获取已启用轮播图' })
+  getEnableBanner() {
+    return this.bannerService.enableBanners();
+  }
+
+  @Post('setInterval')
+  @ApiOperation({ summary: '设置轮播图播放速度' })
+  setInterval(@Body() bannerOption: { interval: number }) {
+    return this.bannerService.setInterval(bannerOption.interval);
+  }
 }
