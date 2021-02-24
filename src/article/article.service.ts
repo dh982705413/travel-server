@@ -19,7 +19,6 @@ export class ArticleService {
 
   async getArticle(currentPage: number, pageSize: number, user: UserDto) {
     const articles = user.articles;
-    console.log(currentPage, pageSize);
     return {
       total: articles.length,
       articles: this.pagination(currentPage, pageSize, articles),
@@ -31,6 +30,8 @@ export class ArticleService {
     const preview = await this.CommonService.uploadImage(file, 'preview');
     dto.preview = preview as any;
     const article = await this.articleModel.create(dto);
+    article.author = user;
+    article.save();
     user.articles.push(article);
     user.save();
     return { message: '添加成功' };
@@ -51,6 +52,11 @@ export class ArticleService {
 
   async findArticleById(id: string) {
     return await this.articleModel.findById(id);
+  }
+
+  async getHotArticle() {
+    const article = await this.articleModel.find().populate('author');
+    return article.slice(0, 10);
   }
 
   pagination(currentPage: number, pageSize: number, arr: any[]) {

@@ -22,6 +22,11 @@ import { ArticleDto } from './dto/article.dto';
 export class ArticleController {
   constructor(private readonly ArticleService: ArticleService) {}
 
+  @Get('getHotArticle')
+  async getHotArticle() {
+    return await this.ArticleService.getHotArticle();
+  }
+
   @Get(':currentPage/:pageSize')
   @ApiOperation({ summary: '获取文章' })
   @UseGuards(AuthGuard('jwt'))
